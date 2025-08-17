@@ -1,0 +1,259 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono&display=swap');
+
+.message-text>h1,
+.message-text>h2,
+.message-text>h3,
+.message-text>h4,
+.message-text>h5,
+.message-text>h6 {
+  font-weight: bold;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: 1.25;
+}
+
+.message-text * {
+  font-size: 14px !important;
+}
+
+
+.message-text p {
+  margin-top: 0.8rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #e6e6e6;
+}
+
+.message-text ul,
+.message-text ol {
+  padding-left: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.message-text li {
+  margin-bottom: 0.3rem;
+}
+
+.message-text code {
+  background-color: transparent;
+  color: #f8f8f2;
+  font-family: 'Fira Mono', 'Courier New', monospace;
+  font-size: 0.9em;
+  padding: 0.2rem 0.4rem;
+  border-radius: 5px;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+
+.codehilite {
+  background: transparent;
+  color: #d4d4d4;
+  padding: 0.6em;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: Consolas, 'Courier New', monospace;
+  font-size: 14px;
+}
+
+
+.toggle-think {
+  background: none;
+  border: 0;
+  font-size: 14px;
+  display: flex;
+  color: #e0e0e0;
+}
+
+.think-content {
+  background-color: transparent;
+  margin-top: 0px;
+  margin-bottom: 1.2rem;
+  margin-right: 40%;
+  color: #dcdcdc;
+  overflow: auto;
+  position: relative;
+  display: none;
+}
+
+
+
+.think-content p {
+  font-size: 12px !important;
+  position: relative;
+  padding-left: 25px;
+  margin-bottom: 20px;
+}
+
+.think-content p::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  width: 6px;
+  height: 6px;
+  background: rgb(255, 255, 255, 0.6);
+  border-radius: 50%;
+}
+
+.think-content p::after {
+  content: "";
+  position: absolute;
+
+  left: 10px;
+  top: 20px;
+  width: 1px;
+  height: calc(100% - 20px);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+
+
+.think-content p {
+  margin-bottom: 15px;
+}
+
+
+.message-text pre {
+  background-color: rgba(24, 24, 24, 0.7);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 0.7rem;
+  margin-bottom: 1.2rem;
+  color: #dcdcdc;
+  font-family: monospace;
+  overflow: auto;
+  box-shadow: 0 2px 6px rgba(77, 77, 77, 0.3);
+  position: relative;
+}
+
+.message-text pre::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.message-text pre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0);
+  border-radius: 4px;
+  transition: background 0.25s ease, opacity 0.25s ease;
+  opacity: 0;
+}
+
+.message-text pre:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  opacity: 1;
+}
+
+.message-text pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.message-text pre:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.table-wrapper {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  overflow-x: auto;
+}
+
+.message-text table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.message-text th,
+.message-text td {
+  padding: 0.6rem 1.2rem;
+  text-align: left;
+  color: white;
+  background-color: rgba(24, 24, 24, 0.3);
+}
+
+.message-text th {
+  background-color: rgba(24, 24, 24, 0.3);
+}
+
+.message-text a {
+  color: #4fa3ff;
+  text-decoration: none;
+  transition: all 0.2s ease-out;
+}
+
+.message-text a:hover {
+  text-decoration: underline;
+}
+
+.message-text img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1rem 0;
+}
+
+.message-text blockquote {
+  padding-left: 1.5rem;
+  color: #a9b7c6;
+  border-left: 3px solid #4fa3ff;
+  font-style: italic;
+  margin-bottom: 0.8rem;
+}
+
+.message-text details {
+  margin-top: 1.5rem;
+}
+
+.message-text summary {
+  cursor: pointer;
+  font-weight: bold;
+  padding-left: 0.6rem;
+}
+
+.copy-btn,
+.edit-btn-t {
+  background: transparent;
+  border: none;
+  color: #10b981;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0;
+  padding: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 8px;
+}
+
+.copy-btn {
+  right: 8px;
+}
+
+.edit-btn-t {
+  right: 36px;
+}
+
+.message-text pre:hover .copy-btn,
+.message-text pre:hover .edit-btn-t {
+  opacity: 1;
+}
+
+.copy-btn svg,
+.edit-btn-t svg {
+  stroke-width: 2.5;
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+}
+
+@media (max-width: 768px) {
+  .message-text pre {
+    margin-right: 20px;
+    margin-left: 0;
+    font-size: 13px;
+  }
+}

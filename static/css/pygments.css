@@ -1,0 +1,133 @@
+pre {
+  line-height: 125%;
+}
+
+td.linenos .normal,
+span.linenos {
+  color: inherit;
+  background-color: transparent;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+td.linenos .special,
+span.linenos.special {
+  color: #000000;
+  background-color: #ffffc0;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.codehilite .hll {
+  background-color: #333842;
+}
+
+
+.codehilite .c,
+.codehilite .ch,
+.codehilite .cm,
+.codehilite .cp,
+.codehilite .cpf,
+.codehilite .c1,
+.codehilite .cs,
+.codehilite .gu {
+  color: #6a9955;
+  font-style: italic;
+}
+
+.codehilite .err {
+  color: #f44747;
+  background-color: #1e0010;
+}
+
+.codehilite .k,
+.codehilite .kc,
+.codehilite .kd,
+.codehilite .kp,
+.codehilite .kr,
+.codehilite .kt,
+.codehilite .sa {
+  color: #569cd6;
+}
+
+.codehilite .kn,
+.codehilite .ow,
+.codehilite .nt {
+  color: #c586c0;
+}
+
+.codehilite .s,
+.codehilite .sb,
+.codehilite .sc,
+.codehilite .dl,
+.codehilite .sd,
+.codehilite .s2,
+.codehilite .sh,
+.codehilite .si,
+.codehilite .sx,
+.codehilite .sr,
+.codehilite .s1,
+.codehilite .ss {
+  color: #ce9178;
+}
+
+.codehilite .m,
+.codehilite .mb,
+.codehilite .mf,
+.codehilite .mh,
+.codehilite .mi,
+.codehilite .mo,
+.codehilite .il,
+.codehilite .se {
+  color: #b5cea8;
+}
+
+.codehilite .nf,
+.codehilite .fm {
+  color: #dcdcaa;
+}
+
+.codehilite .nc,
+.codehilite .no,
+.codehilite .nd,
+.codehilite .ne,
+.codehilite .nx {
+  color: #4ec9b0;
+}
+
+.codehilite .na,
+.codehilite .nv,
+.codehilite .vc,
+.codehilite .vg,
+.codehilite .vi,
+.codehilite .vm {
+  color: #9cdcfe;
+}
+
+.codehilite .o,
+.codehilite .op,
+.codehilite .pm,
+.codehilite .p {
+  color: #d4d4d4;
+}
+
+.codehilite .gd {
+  color: #f44747;
+}
+
+.codehilite .gi {
+  color: #6a9955;
+}
+
+.codehilite .ge {
+  font-style: italic;
+}
+
+.codehilite .gs {
+  font-weight: bold;
+}
+
+.codehilite .ges {
+  font-weight: bold;
+  font-style: italic;
+}
