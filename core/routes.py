@@ -6,9 +6,14 @@ import re, time
 
 chat_blueprint = Blueprint("chat", __name__)
 
-API_URL = "http://localhost:11434/api/chat"
+API_URL = "http://localhost:11434/api/"
 
-@chat_blueprint.route("/chat", methods=["POST"])
+@chat_blueprint.route("/api/get-models", methods=["GET"])
+def get_models():
+    models = requests.get(API_URL+"tags").json()
+    return models
+    
+@chat_blueprint.route("/api/chat", methods=["POST"])
 def chat():
     session_id = request.form.get("conversation_id")
     user_message = request.form.get("message")
@@ -22,29 +27,31 @@ def chat():
         messages = []
         raw_messages = json.loads(messages_json)
 
+        raw_messages.pop(0)
         for msg in raw_messages:
             messages.append({
                 "role": msg["role"],
                 "content": msg["raw"] if "raw" in msg else msg["content"]
             })
+        print(messages)
             
     except json.JSONDecodeError as e:
         return jsonify({"error": f"Invalid messages JSON: {e}"}), 400
 
     def stream():
-        full_thinking_text = ""
-        full_text = ""
-        last_chunk = None
-        thinking = False
-        last_thinking_len = 0
-        last_text_len = 0
+            full_thinking_text = ""
+            full_text = ""
+            last_chunk = None
+            thinking = False
+            last_thinking_len = 0
+            last_text_len = 0
 
-        start_time = time.time()
-        think_start = None
-        total_think_time = 0
+            start_time = time.time()
+            think_start = None
+            total_think_time = 0
 
-        try:
-            with requests.post(API_URL, json={"model": model, "messages": messages}, stream=True) as resp:
+
+            with requests.post(API_URL+"chat", json={"model": model, "messages": messages}, stream=True) as resp:
                 resp.raise_for_status()
 
                 for chunk in resp.iter_lines():
@@ -59,8 +66,23 @@ def chat():
 
                     message_data = data.get("message", {})
                     text = message_data.get("content", "")
-                    thinking_piece = message_data.get("thinking", "")
 
+                    # <think></think>
+                    if text == "<think>":
+                        if not thinking:
+                            thinking = True
+                            think_start = time.time()
+
+                    elif text == "</think>":
+                        if thinking:
+                            thinking = False
+
+                            total_think_time += time.time() - think_start
+                            think_start = None
+                            last_thinking_len = len(full_text)
+
+                    # {"thinking": ""}
+                    thinking_piece = message_data.get("thinking", "")
                     if thinking_piece:
                         if not thinking:
                             full_thinking_text += "<think>"
@@ -73,7 +95,7 @@ def chat():
                         if new_thinking:
                             yield new_thinking
                     else:
-                        if thinking:
+                        if thinking and full_thinking_text != "":
                             full_thinking_text += "</think>"
                             total_think_time += time.time() - think_start
                             think_start = None
@@ -87,7 +109,7 @@ def chat():
                             yield new_text
 
                     if data.get("done", False):
-                        if thinking: 
+                        if thinking and full_thinking_text != "": 
                             full_thinking_text += "</think>"
                             total_think_time += time.time() - think_start
                             thinking = False
@@ -103,17 +125,12 @@ def chat():
                             "model": data.get("model"),
                         }
                         print(meta)
-                        yield full_text+f"\n<!--END-->\n" + convert_markdown(full_thinking_text + full_text)
+                        raw_text = full_text
+                        if "</think>" in raw_text:
+                            raw_text = raw_text.split("</think>")[1]
+                        yield raw_text+f"\n<!--END-->\n" + convert_markdown(full_thinking_text + full_text)
                         yield f"\n<script>window.chatMeta = {json.dumps(meta)};</script>"
                         break
 
-        except Exception as e:
-            chunk_str = last_chunk.decode() if last_chunk else "No chunk received"
-            yield (
-                "\n<!--END-->\n"
-                f"<h1>Internal Server Streaming Error</h1>"
-                f"<h2>Last Chunk:</h2><pre>{chunk_str}</pre>"
-                f"<h2>Error:</h2><pre>{str(e)}</pre>"
-            )
 
     return Response(stream(), mimetype="text/html")

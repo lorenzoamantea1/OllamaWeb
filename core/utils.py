@@ -3,10 +3,11 @@ from bs4 import BeautifulSoup
 
 def convert_markdown(text):
     extensions = ["fenced_code", "codehilite", "tables"]
-    safe_html = "think"
     base_text = None
-    if safe_html in text:
-        base_text, md_text = text.split(f"</{safe_html}>")
+    if "<think>" in text:
+        base_text, md_text = text.split(f"</think>")
+        if len(base_text.removeprefix("<think>")) < 6:
+            base_text = None
     else:
         md_text = text
     try:
@@ -57,7 +58,7 @@ def convert_markdown(text):
         for table in soup.find_all("table"):
             wrapper = soup.new_tag("div", **{"class": "table-wrapper"})
             table.wrap(wrapper)
-        return str(base_text) + f"</{safe_html}>\n" + str(soup) if safe_html in text else str(soup)
+        return str(base_text) + f"</think>\n" + str(soup) if base_text else str(soup)
     except Exception as e:
         print(f"Errore in convert_markdown: {e}")
-        return f"<pre>{text}</pre>"
+        return text
