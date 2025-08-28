@@ -1,5 +1,6 @@
 import { renderMessages } from './ui/rendering.js'
-import { model, model_name} from "./app.js";
+import { model, model_name } from "./app.js";
+import { writeSidebarOpen, updateSidebarVisibility } from './ui/domManipulation.js';
 
 let conversations = [];
 
@@ -26,6 +27,20 @@ export function loadConversations() {
 
     renderConversations();
     renderMessages();
+    updateInputContainer();
+}
+
+export function updateInputContainer() {
+    const inputContainer = document.querySelector(".input-container");
+    const inputWrapperH1 = document.querySelector(".input-wrapper h1");
+
+    if (currentConversationId == null) {
+        inputContainer.style.marginBottom = "calc((100vh - 158px) / 2)"
+        inputWrapperH1.style.display = "";
+    } else {
+        inputContainer.style.marginBottom = "0%";
+        inputWrapperH1.style.display = "none";
+    }
 }
 
 export function saveConversations() {
@@ -49,11 +64,16 @@ export function createNewConversation() {
     };
     conversations.unshift(newConversation);
     currentConversationId = newConversation.id;
+
+    const newUrl = `${window.location.pathname}?c=${currentConversationId}`;
+    history.pushState({ currentConversationId }, "", newUrl);
+    
+    updateInputContainer();
     saveConversations();
     renderConversations();
     renderMessages();
     if (window.innerWidth < 768) {
-        sidebarOpen = false;
+        writeSidebarOpen(false);
         updateSidebarVisibility();
     }
 }
@@ -61,10 +81,15 @@ export function createNewConversation() {
 export function selectConversation(conversationId) {
     currentConversationId = conversationId;
     streamingConversationId = conversationId;
+
+    const newUrl = `${window.location.pathname}?c=${currentConversationId}`;
+    history.pushState({ currentConversationId }, "", newUrl);
+
+    updateInputContainer();
     renderConversations();
     renderMessages();
     if (window.innerWidth < 768) {
-        sidebarOpen = false;
+        writeSidebarOpen(false);
         updateSidebarVisibility();
     }
 }
@@ -73,7 +98,11 @@ export function deleteConversation(id) {
     conversations = conversations.filter(conv => conv.id !== id);
     currentConversationId = null;
 
+    const newUrl = `${window.location.pathname}`;
+    history.pushState({ currentConversationId }, "", newUrl);
+
     saveConversations();
+    updateInputContainer();
     renderConversations();
     renderMessages();
 }

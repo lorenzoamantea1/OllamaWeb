@@ -1,20 +1,52 @@
-import { loadConversations } from "./convsManager.js";
+import { loadConversations, selectConversation } from "./convsManager.js";
 import { sendMessage } from "./messageHandling.js";
 import { updateSidebarVisibility, autoResizeTextarea, writeSidebarOpen } from './ui/domManipulation.js'
-import { model_name, writeModelName, writeModel } from "./app.js";
+import { renderModelsList } from "./ui/rendering.js";
 
-const customSelect = document.getElementById('customSelect');
-export const selected = customSelect.querySelector('.selected');
-export const options = customSelect.querySelector('.options');
+export const title = document.querySelector('.header-left .title');
+const models_menu = document.querySelector('.header-left .models-menu');
+const searchInput = document.querySelector('.models-search');
+const info = document.querySelector('.search-info');
 
-const title = document.querySelector('.header-left .title');
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     loadConversations();
-    setupEventListeners();
+    renderModelsList();
+
+    const sessionId = getQueryParam("c");
+    if (sessionId) {
+        selectConversation(sessionId);
+    }
+
     updateSidebarVisibility();
+    setupEventListeners();
 });
 
+function updateSearch() {
+    const modelsList = document.querySelector('#modelsList');
+    const models = modelsList.querySelectorAll('li');
+    const query = searchInput.value.toLowerCase();
+    let count = 0;
+
+    models.forEach(model_item => {
+        if (model_item.textContent.toLowerCase().includes(query)) {
+            model_item.style.display = '';
+            count++;
+        } else {
+            model_item.style.display = 'none';
+        }
+    });
+
+    if (count === 0) {
+        info.textContent = 'No models found';
+    } else {
+        info.textContent = `Found ${count} model${count > 1 ? 's' : ''}`;
+    }
+}
 export function setupEventListeners() {
     const messageInput = document.getElementById('messageInput');
 
@@ -34,24 +66,8 @@ export function setupEventListeners() {
         updateSidebarVisibility();
     });
 
-    options.querySelectorAll('li').forEach(li => {
-        li.addEventListener('click', () => {
-            writeModel(li.getAttribute('data-value'));
-            writeModelName(li.textContent);
-
-            title.textContent = model_name
-            selected.textContent = model_name;;
-            options.classList.remove('show');
-
-            options.style.display = 'none'
-        });
-    });
-
-
-    customSelect.addEventListener('click', () => {
-        options.classList.toggle('show');
-        customSelect.classList.toggle('open');
-
-        options.style.display = 'block'
-    });
+    title.addEventListener('click', () => {
+        models_menu.classList.toggle('show');
+    })
+    searchInput.addEventListener('input', updateSearch);
 }

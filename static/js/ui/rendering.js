@@ -1,5 +1,9 @@
 import { getCurrentConversation } from '../convsManager.js'
-import { model_name } from "../app.js";
+import { getModels } from '../api/models.js';
+import { model_name, writeModel, writeModelName } from "../app.js";
+
+export const title = document.querySelector('.header-left .title');
+const models_menu = document.querySelector('.header-left .models-menu');
 
 export function renderMessages() {
     const container = document.getElementById('messagesWrapper');
@@ -23,7 +27,7 @@ export function renderMessages() {
             </div>
             <div class="message-content">
                 <div class="message-header">
-                    <span class="message-role">${message.role === 'user' ? 'Tu' : message.model_name}</span>
+                    <span class="message-role">${message.role === 'user' ? 'You' : message.model_name}</span>
                     <span class="message-time">${message.timestamp}</span>
                 </div>
                 <div class="message-text">${message.content}</div>
@@ -73,6 +77,42 @@ export function renderMessages() {
 
     container.scrollTop = container.scrollHeight;
 }
+export async function renderModelsList() {
+    try {
+        let models_list = await getModels();
+        let container = document.getElementById('modelsList');
+        
+        if (Array.isArray(models_list)) {
+            container.innerHTML = '';
+
+            models_list.forEach(model_ => {
+                let listItem = document.createElement('li');
+                listItem.classList.add('model');
+                listItem.textContent = model_["model"]; 
+                
+                listItem.addEventListener('click', () => {
+                    if (typeof models !== 'undefined') {
+                        models.forEach(m => m.id = '');
+                    }
+                    listItem.id = 'selected-model';
+                    
+                    writeModel(listItem.textContent);
+                    writeModelName(listItem.textContent);
+                    title.textContent = listItem.textContent;
+                    models_menu.classList.toggle('show');
+                });
+
+                container.appendChild(listItem); 
+            });
+        } else {
+            console.error('I dati non sono un array valido:', models_list);
+        }
+    } catch (error) {
+        console.error('Errore nel rendering dei modelli:', error);
+    }
+}
+
+
 
 
 export function renderAssistantStreamingMessage(text) {

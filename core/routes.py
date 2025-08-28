@@ -1,21 +1,34 @@
-from flask import Blueprint, request, Response, jsonify
-import json
-import requests
+from flask import Blueprint, request, Response, jsonify, render_template
 from .utils import convert_markdown
-import re, time
+import requests
+import json
+import time
 
 chat_blueprint = Blueprint("chat", __name__)
 
 API_URL = "http://localhost:11434/api/"
 
+@chat_blueprint.route("/", methods=["GET"])
+def index():
+    return render_template("index.html")
+
 @chat_blueprint.route("/api/get-models", methods=["GET"])
 def get_models():
-    models = requests.get(API_URL+"tags").json()
-    return models
+    try:
+        response = requests.get(API_URL + "tags")
+        response.raise_for_status()
+
+        models = response.json().get("models", [])
+
+        return jsonify(models)
     
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+
 @chat_blueprint.route("/api/chat", methods=["POST"])
 def chat():
     session_id = request.form.get("conversation_id")
+    
     user_message = request.form.get("message")
     messages_json = request.form.get("messages")
     model = request.form.get("model", "llama3.2")
@@ -33,27 +46,27 @@ def chat():
                 "role": msg["role"],
                 "content": msg["raw"] if "raw" in msg else msg["content"]
             })
-        print(messages)
             
     except json.JSONDecodeError as e:
         return jsonify({"error": f"Invalid messages JSON: {e}"}), 400
 
     def stream():
-            full_thinking_text = ""
-            full_text = ""
-            last_chunk = None
             thinking = False
-            last_thinking_len = 0
-            last_text_len = 0
-
-            start_time = time.time()
-            think_start = None
             total_think_time = 0
+            thinking_scheme = "tag"
+            full_thinking_text = ""
 
 
+            full_text = ""
+            start_time = time.time()
+            total_time_sec = 0
+        
+
+\
             with requests.post(API_URL+"chat", json={"model": model, "messages": messages}, stream=True) as resp:
                 resp.raise_for_status()
 
+                # Streaming
                 for chunk in resp.iter_lines():
                     if not chunk:
                         continue
@@ -64,71 +77,55 @@ def chat():
                     except json.JSONDecodeError:
                         continue
 
+                    # Text parsing
                     message_data = data.get("message", {})
                     text = message_data.get("content", "")
 
-                    # <think></think>
-                    if text == "<think>":
+                    # Think Handling
+                    thinking_content = message_data.get("thinking", False)
+                    if thinking_content:
+                        thinking_scheme = "json"
                         if not thinking:
                             thinking = True
-                            think_start = time.time()
-
-                    elif text == "</think>":
-                        if thinking:
-                            thinking = False
-
-                            total_think_time += time.time() - think_start
-                            think_start = None
-                            last_thinking_len = len(full_text)
-
-                    # {"thinking": ""}
-                    thinking_piece = message_data.get("thinking", "")
-                    if thinking_piece:
-                        if not thinking:
                             full_thinking_text += "<think>"
+                        full_thinking_text += thinking_content
+                        text = thinking_content
+
+                    elif "<think>" in text:
+                        thinking_scheme = "tag"
+                        if not thinking:
                             thinking = True
-                            think_start = time.time()
-                        full_thinking_text += thinking_piece
+                        full_thinking_text += "<think>"
 
-                        new_thinking = full_thinking_text[last_thinking_len:]
-                        last_thinking_len = len(full_thinking_text)
-                        if new_thinking:
-                            yield new_thinking
-                    else:
-                        if thinking and full_thinking_text != "":
-                            full_thinking_text += "</think>"
-                            total_think_time += time.time() - think_start
-                            think_start = None
-                            thinking = False
-                            last_thinking_len = len(full_thinking_text)
+                    if thinking_scheme == "json" and not thinking_content and thinking:
+                        thinking = False
+                        total_think_time += time.time() - start_time
+                        full_thinking_text += "</think>"
 
+                    if "</think>" in text and thinking:
+                        thinking = False
+                        total_think_time += time.time() - start_time
+                        full_thinking_text += "</think>"
+
+                    if thinking and thinking_scheme == "tag" and text not in ["<think>", "</think>"]:
+                        full_thinking_text += text
+
+                    # Streaming text
+                    yield text
+                    if not thinking:
                         full_text += text
-                        new_text = full_text[last_text_len:]
-                        last_text_len = len(full_text)
-                        if new_text:
-                            yield new_text
 
+                    # End 
                     if data.get("done", False):
-                        if thinking and full_thinking_text != "": 
-                            full_thinking_text += "</think>"
-                            total_think_time += time.time() - think_start
-                            thinking = False
-                            last_thinking_len = len(full_thinking_text)
-
-                        end_time = time.time()
-                        total_time = end_time - start_time
 
                         meta = {
                             "done_reason": data.get("done_reason"),
-                            "total_time_sec": total_time,
+                            "total_time_sec": total_time_sec,
                             "total_think_time_sec": total_think_time,
                             "model": data.get("model"),
                         }
-                        print(meta)
-                        raw_text = full_text
-                        if "</think>" in raw_text:
-                            raw_text = raw_text.split("</think>")[1]
-                        yield raw_text+f"\n<!--END-->\n" + convert_markdown(full_thinking_text + full_text)
+
+                        yield full_text+f"\n<!--END-->\n" + convert_markdown(full_thinking_text, full_text)
                         yield f"\n<script>window.chatMeta = {json.dumps(meta)};</script>"
                         break
 

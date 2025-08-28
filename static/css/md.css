@@ -21,7 +21,6 @@
   margin-top: 0.8rem;
   margin-bottom: 1rem;
   font-size: 1rem;
-  color: #e6e6e6;
 }
 
 .message-text ul,
@@ -60,15 +59,16 @@
 .toggle-think {
   background: none;
   border: 0;
+  margin-bottom: -10px;
   font-size: 14px;
   display: flex;
-  color: #e0e0e0;
+  color: var(--text-secondary)
 }
 
 .think-content {
   background-color: transparent;
-  margin-top: 0px;
-  margin-bottom: 1.2rem;
+  margin-top: -10px;
+  margin-bottom: -20px;
   margin-right: 40%;
   color: #dcdcdc;
   overflow: auto;
@@ -81,8 +81,9 @@
 .think-content p {
   font-size: 12px !important;
   position: relative;
+  color: var(--text-primary);
   padding-left: 25px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .think-content p::before {
@@ -120,7 +121,6 @@
   border-radius: 0.5rem;
   margin-top: 0.7rem;
   margin-bottom: 1.2rem;
-  color: #dcdcdc;
   font-family: monospace;
   overflow: auto;
   box-shadow: 0 2px 6px rgba(77, 77, 77, 0.3);

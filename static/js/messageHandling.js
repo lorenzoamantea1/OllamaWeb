@@ -6,12 +6,21 @@ import { model, model_name } from "./app.js";
 
 let isLoading = false;
 
+function escapeHTML(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function sendMessage() {
     if (isLoading) return;
 
     let input = document.getElementById('messageInput');
 
-    const userMessage = input.value.trim();
+    const userMessage = escapeHTML(input.value);
     if (!userMessage) return;
 
     document.querySelector('.send-btn').disabled = true;
