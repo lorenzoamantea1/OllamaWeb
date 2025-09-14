@@ -1,8 +1,9 @@
 # OllamaWeb
 
 OllamaWeb is a lightweight web application that provides an easy-to-use interface for interacting with **[Ollama](https://ollama.ai/)** AI models. It allows you to run and query AI models locally or remotely, without writing any code, directly from your browser.  
-<img width="1906" height="951" alt="250914_16h22m31s_screenshot" src="https://github.com/user-attachments/assets/0225f02e-9a6f-41af-a06c-2c3d1c525649" />
-
+<br>
+<img width="1918" height="963" alt="image" src="https://github.com/user-attachments/assets/1ef083a4-f3ec-4d97-93ac-47b345b8acb5" />
+<br>
 ## 🚀 Features
 - **Web-based chat interface** – Interact with your Ollama AI models directly from a browser without writing code.  
 - **Multi-model support** – Easily switch between different models you have downloaded.  
