@@ -12,14 +12,16 @@ OllamaWeb is a lightweight web interface to interact with **[Ollama](https://oll
 - Python libraries (listed in `requirements.txt`)
 
 ## ⚙️ Installation
-Install ollama and pull model
+Install ollama:
 ```bash
-# On linux
-curl -fsSL https://ollama.com/install.sh | sh 
-sudo systemd enable -now ollama
+curl -fsSL https://ollama.com/install.sh | sh
+sudo systemctl enable --now ollama
+```
+Pull the desired model:
+```bash
 ollama pull <model>
 ```
-Clone the repository and install the dependencies:
+Clone this repository and install Python dependencies:
 ```bash
 git clone https://github.com/lorenzoamantea1/OllamaWeb.git
 cd OllamaWeb
