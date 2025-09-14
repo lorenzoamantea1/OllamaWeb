@@ -140,7 +140,7 @@ function renderConversations() {
                             <line x1="3" y1="10" x2="21" y2="10"/>
                         </svg>
                         ${new Date(conversation.updatedAt).toLocaleDateString()}
-                        <span style="margin-left: 8px;">${conversation.messages.length} messaggi</span>
+                        <span style="margin-left: 8px;">${conversation.messages.length} messages</span>
                     </div>
                 </div>
                 <button class="delete-btn" onclick="event.stopPropagation(); deleteConversation('${conversation.id}')"
