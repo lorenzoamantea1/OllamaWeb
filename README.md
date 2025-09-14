@@ -12,10 +12,24 @@ OllamaWeb is a lightweight web interface to interact with **[Ollama](https://oll
 - Python libraries (listed in `requirements.txt`)
 
 ## ⚙️ Installation
+Install ollama and pull model
+```bash
+# On linux
+curl -fsSL https://ollama.com/install.sh | sh 
+sudo systemd enable -now ollama
+ollama pull <model>
+```
 Clone the repository and install the dependencies:
-
 ```bash
 git clone https://github.com/lorenzoamantea1/OllamaWeb.git
 cd OllamaWeb
 pip install -r requirements.txt
 ```
+
+## ▶️ Usage
+Start the Python server:
+
+```bash
+python main.py
+```
+By default, the app will be available at http://127.0.0.1:5000/
