@@ -18,7 +18,7 @@ It allows you to run and query AI models locally or remotely, without writing an
 - Python libraries (listed in `requirements.txt`)
 
 ## ⚙️ Installation
-Install ollama:
+Install ollama (Linux):
 ```bash
 curl -fsSL https://ollama.com/install.sh | sh
 sudo systemctl enable --now ollama
