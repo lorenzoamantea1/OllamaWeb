@@ -42,4 +42,4 @@ Start the Python server:
 ```bash
 python main.py
 ```
-By default, the app will be available at http://127.0.0.1:5000/
+By default, the app will be available at http://127.0.0.1:5000
